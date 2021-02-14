@@ -1,24 +1,40 @@
 #include <iostream>
 #include <stdlib.h>
 
-int compare_int(const void *voidA, const void *voidB)
+struct student
+{
+    int grade;
+    int studentID;
+    std::string name;
+};
+
+int compare_studentID(const void *voidA, const void *voidB)
 {
     // Return zero if both int are equal, >0 if B>A and <0 if A>B.
-    // Cast void pointers to int pointers
-    int *intA = (int *)(voidA);
-    int *intB = (int *)(voidB);
-    // Dereference pointers and subtract
-    return *intB - *intA;
+    // Cast void pointers struct student pointers
+    student *Ap = (student *)(voidA);
+    student *Bp = (student *)(voidB);
+    // Dereference pointer, maybe could do that all at once
+    student A = *Ap;
+    student B = *Bp;
+    // subtract the element you want
+    return B.studentID - A.studentID;
+}
+int compare_grade(const void *voidA, const void *voidB)
+{
+    // Return zero if both int are equal, >0 if B>A and <0 if A>B.
+    // Cast void pointers struct student pointers
+    student *Ap = (student *)(voidA);
+    student *Bp = (student *)(voidB);
+    // Dereference pointers with arrow notation
+    int A = Ap->grade;
+    int B = Bp->grade;
+    // subtract the elements
+    return B - A;
 }
 
 int main()
 {
-    struct student
-    {
-        int grade;
-        int studentID;
-        std::string name;
-    };
 
     const int ARRAY_SIZE = 10;
     student studentArray[ARRAY_SIZE] = {
@@ -37,7 +53,16 @@ int main()
     // Problem: we cant just put &studentArray[0].StudentID here because
     // then qsort still switches blocks of memory of sizeof(student) back
     // and forth and that results in wrong ordering.
-    qsort(&studentArray[0].grade, ARRAY_SIZE, sizeof(student), compare_int);
+    qsort(studentArray, ARRAY_SIZE, sizeof(student), compare_studentID);
+    for (int i = 0; i < ARRAY_SIZE; i++)
+    {
+        std::cout << studentArray[i].name << std::endl;
+        std::cout << studentArray[i].studentID << std::endl;
+        std::cout << studentArray[i].grade << std::endl;
+    }
+
+    std::cout << std::endl;
+    qsort(studentArray, ARRAY_SIZE, sizeof(student), compare_grade);
     for (int i = 0; i < ARRAY_SIZE; i++)
     {
         std::cout << studentArray[i].name << std::endl;
